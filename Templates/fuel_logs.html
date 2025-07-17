@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2 style="text-align: center; color: #d7262b;">Fuel Logs</h2>
+
+    <div style="text-align: center; margin-bottom: 20px;">
+        <a href="{{ url_for('add_fuel_log') }}" style="background-color: #d7262b; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none;">Add Fuel Log</a>
+    </div>
+
+    {% if fuel_logs %}
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background-color: #f2f2f2;">
+                    <th style="padding: 10px; border: 1px solid #ccc;">Date</th>
+                    <th style="padding: 10px; border: 1px solid #ccc;">Vehicle</th>
+                    <th style="padding: 10px; border: 1px solid #ccc;">Litres</th>
+                    <th style="padding: 10px; border: 1px solid #ccc;">Cost</th>
+                    <th style="padding: 10px; border: 1px solid #ccc;">Driver</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in fuel_logs %}
+                    <tr>
+                        <td style="padding: 10px; border: 1px solid #ccc;">{{ log.date }}</td>
+                        <td style="padding: 10px; border: 1px solid #ccc;">{{ log.vehicle }}</td>
+                        <td style="padding: 10px; border: 1px solid #ccc;">{{ log.litres }}</td>
+                        <td style="padding: 10px; border: 1px solid #ccc;">{{ log.cost }}</td>
+                        <td style="padding: 10px; border: 1px solid #ccc;">{{ log.driver }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}

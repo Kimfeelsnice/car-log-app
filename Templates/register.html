@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register - ACT</title>
+    <style>
+        body {
+            background-color: #d7262b;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .register-container {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 30px;
+            background-color: white;
+            color: #333;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        }
+
+        img.logo {
+            width: 120px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: #d7262b;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="email"] {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #d7262b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #b91e23;
+        }
+
+        .back-login {
+            margin-top: 20px;
+        }
+
+        .back-login a {
+            color: #d7262b;
+            text-decoration: none;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <img src="{{ url_for('static', filename='images/act-logo.png') }}" alt="ACT Logo" class="logo">
+        <h2>Create New Account</h2>
+        <form method="POST">
+            <input type="text" name="username" placeholder="Choose a Username" required><br>
+            <input type="email" name="email" placeholder="Enter Your Email" required><br>
+            <input type="password" name="password" placeholder="Create a Password" required><br>
+            <button type="submit">Register</button>
+        </form>
+
+        <div class="back-login">
+            <p>Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
+        </div>
+    </div>
+</body>
+</html>

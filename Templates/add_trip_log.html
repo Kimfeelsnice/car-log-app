@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    h2 {
+        color: #d7262b;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .form-container {
+        max-width: 600px;
+        margin: auto;
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    form label {
+        display: block;
+        margin-top: 15px;
+        font-weight: bold;
+    }
+
+    input, textarea, select {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    textarea {
+        resize: vertical;
+    }
+
+    button {
+        background-color: #d7262b;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        margin-top: 20px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #b91e23;
+    }
+
+    .back-link {
+        display: block;
+        text-align: center;
+        margin-top: 20px;
+        text-decoration: none;
+        color: #d7262b;
+    }
+
+    .back-link:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<div class="form-container">
+    <h2>Add Trip Log</h2>
+    <form method="POST" action="{{ url_for('add_trip_log') }}">
+        <label for="date">Date</label>
+        <input type="date" name="date" required>
+
+        <label for="vehicle">Vehicle</label>
+        <select name="vehicle" required>
+            <option value="">-- Select Vehicle --</option>
+            {% for vehicle in vehicle_list %}
+                <option value="{{ vehicle }}">{{ vehicle }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="start_location">Start Location</label>
+        <input type="text" name="start_location" required>
+
+        <label for="end_location">End Location</label>
+        <input type="text" name="end_location" required>
+
+        <label for="purpose">Purpose</label>
+        <textarea name="purpose" required></textarea>
+
+        <label for="distance">Distance (km)</label>
+        <input type="number" name="distance" step="0.1" required>
+
+        <label for="driver">Driver</label>
+        <select name="driver" required>
+            <option value="{{ current_user.username }}">{{ current_user.username }}</option>
+        </select>
+
+        <button type="submit">Save</button>
+    </form>
+
+    <a class="back-link" href="{{ url_for('dashboard') }}">← Back to dashboard</a>
+</div>
+{% endblock %}

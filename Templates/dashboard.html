@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .top-bar {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 10px;
+    }
+
+    .logout-button {
+        background-color: #555;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .logout-button:hover {
+        background-color: #333;
+    }
+
+    .welcome-header {
+        background-color: #d7262b;
+        color: white;
+        text-align: center;
+        padding: 30px 10px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+    }
+
+    .cards {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+    }
+
+    .card {
+        background-color: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.05);
+        padding: 20px;
+        width: 250px;
+        text-align: center;
+        transition: transform 0.2s;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+    .card h3 {
+        color: #d7262b;
+    }
+
+    .card a {
+        background-color: #d7262b;
+        color: white;
+        text-decoration: none;
+        padding: 8px 16px;
+        border-radius: 5px;
+        display: inline-block;
+        margin-top: 10px;
+    }
+
+    .card a:hover {
+        background-color: #b91e23;
+    }
+</style>
+
+<div class="top-bar">
+    <a href="{{ url_for('logout') }}" class="logout-button">Logout</a>
+</div>
+
+<div class="welcome-header">
+    <h2>Welcome, {{ current_user.username }}</h2>
+    <p>This is your ACT Car Log System dashboard.</p>
+</div>
+
+<div class="cards">
+    <div class="card">
+        <h3>Trip Logs</h3>
+        <p>View and manage your vehicle trips.</p>
+        <a href="{{ url_for('trip_logs') }}">Go</a>
+    </div>
+
+    <div class="card">
+        <h3>Fuel Logs</h3>
+        <p>Track refueling and fuel usage.</p>
+        <a href="{{ url_for('fuel_logs') }}">Go</a>
+    </div>
+
+    <div class="card">
+        <h3>Maintenance</h3>
+        <p>Log services and vehicle maintenance.</p>
+        <a href="{{ url_for('maintenance_logs') }}">Go</a>
+    </div>
+
+    <div class="card">
+        <h3>Reports</h3>
+        <p>Generate summaries and insights.</p>
+        <a href="{{ url_for('report_logs') }}">Go</a>
+    </div>
+</div>
+{% endblock %}

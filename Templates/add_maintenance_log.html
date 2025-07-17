@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    h2 {
+        color: #d7262b;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .form-container {
+        max-width: 600px;
+        margin: auto;
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    form label {
+        display: block;
+        margin-top: 15px;
+        font-weight: bold;
+    }
+
+    input, textarea, select {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    textarea {
+        resize: vertical;
+    }
+
+    button {
+        background-color: #d7262b;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        margin-top: 20px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #b91e23;
+    }
+
+    .back-link {
+        display: block;
+        text-align: center;
+        margin-top: 20px;
+        text-decoration: none;
+        color: #d7262b;
+    }
+
+    .back-link:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<div class="form-container">
+    <h2>Add Maintenance Log</h2>
+    <form method="POST" action="{{ url_for('add_maintenance_log') }}">
+        <label for="date">Date</label>
+        <input type="date" name="date" required>
+
+        <label for="vehicle">Vehicle</label>
+        <select name="vehicle" required>
+            <option value="">-- Select Vehicle --</option>
+            {% for vehicle in vehicle_list %}
+                <option value="{{ vehicle }}">{{ vehicle }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="service_type">Service Type</label>
+        <input type="text" name="service_type" required>
+
+        <label for="cost">Cost</label>
+        <input type="number" name="cost" step="0.01" required>
+
+        <label for="driver">Driver</label>
+        <select name="driver" required>
+            <option value="{{ current_user.username }}">{{ current_user.username }}</option>
+        </select>
+
+        <label for="mechanic">Mechanic</label>
+        <input type="text" name="mechanic">
+
+        <label for="description">Description (optional)</label>
+        <textarea name="description"></textarea>
+
+        <label for="notes">Notes (optional)</label>
+        <textarea name="notes"></textarea>
+
+        <button type="submit">Save</button>
+    </form>
+
+    <a class="back-link" href="{{ url_for('dashboard') }}">← Back to dashboard</a>
+</div>
+{% endblock %}

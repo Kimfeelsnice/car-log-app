@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ACT CHANGE TRANSFORM - Car Log System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .flash-message {
+            background-color: #f0f0f0;
+            border-left: 5px solid #d7262b;
+            padding: 10px;
+            margin: 20px auto;
+            width: 90%;
+            max-width: 600px;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="{{ url_for('static', filename='images/act-logo.png') }}" alt="Logo" class="logo">
+        <h1>ACT CHANGE TRANSFORM</h1>
+    </header>
+    <main>
+        <!-- 🔔 Flash messages block -->
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <div class="flash-messages">
+              {% for message in messages %}
+                <div class="flash-message">{{ message }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

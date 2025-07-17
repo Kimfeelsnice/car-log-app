@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    h2 {
+        color: #d7262b;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .form-container {
+        max-width: 600px;
+        margin: auto;
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    form label {
+        display: block;
+        margin-top: 15px;
+        font-weight: bold;
+    }
+
+    input, textarea, select {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    textarea {
+        resize: vertical;
+    }
+
+    button {
+        background-color: #d7262b;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        margin-top: 20px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #b91e23;
+    }
+
+    .back-link {
+        display: block;
+        text-align: center;
+        margin-top: 20px;
+        text-decoration: none;
+        color: #d7262b;
+    }
+
+    .back-link:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<div class="form-container">
+    <h2>Add Fuel Log</h2>
+    <form method="POST" action="{{ url_for('add_fuel_log') }}">
+        <label for="date">Date</label>
+        <input type="date" name="date" required>
+
+        <label for="vehicle">Vehicle</label>
+        <select name="vehicle" required>
+            <option value="">-- Select Vehicle --</option>
+            <option value="KBQ 318J">KBQ 318J</option>
+            <option value="KCK 624S">KCK 624S</option>
+            <option value="KDC 172G">KDC 172G</option>
+            <option value="KMDN 427L">KMDN 427L</option>
+            <option value="KMEE 967H">KMEE 967H</option>
+        </select>
+
+        <label for="liters">Litres</label>
+        <input type="number" name="liters" step="0.01" required>
+
+        <label for="cost">Cost</label>
+        <input type="number" name="cost" step="0.01" required>
+
+        <label for="fuel_type">Fuel Type</label>
+        <select name="fuel_type" required>
+            <option value="">-- Select Fuel Type --</option>
+            <option value="Petrol">Petrol</option>
+            <option value="Diesel">Diesel</option>
+            <option value="Electric">Electric</option>
+            <option value="Hybrid">Hybrid</option>
+        </select>
+
+        <label for="driver">Driver</label>
+        <input type="text" name="driver" value="{{ session['username'] }}" readonly>
+
+        <label for="station">Station</label>
+        <input type="text" name="station" required>
+
+        <button type="submit">Save</button>
+    </form>
+
+    <a class="back-link" href="{{ url_for('dashboard') }}">← Back to dashboard</a>
+</div>
+{% endblock %}
