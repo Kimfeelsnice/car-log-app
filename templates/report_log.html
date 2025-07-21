@@ -75,8 +75,11 @@
             <th>Vehicle</th>
             <th>Start Location</th>
             <th>End Location</th>
+            <th>Starting Odometer</th>
+            <th>Ending Odometer</th>
+            <th>Distance (km)</th>
             <th>Purpose</th>
-            <th>Distance</th>
+            <th>Program Charged</th>
             <th>Driver</th>
         </tr>
     </thead>
@@ -87,8 +90,11 @@
             <td>{{ log.vehicle }}</td>
             <td>{{ log.start_location }}</td>
             <td>{{ log.end_location }}</td>
+            <td>{{ "%.1f"|format(log.starting_odometer) }}</td>
+            <td>{{ "%.1f"|format(log.ending_odometer) }}</td>
+            <td>{{ "%.1f"|format(log.distance) }}</td>
             <td>{{ log.purpose }}</td>
-            <td>{{ "%.2f"|format(log.distance) }}</td>
+            <td>{{ log.program_charged }}</td>
             <td>{{ log.driver }}</td>
         </tr>
         {% endfor %}

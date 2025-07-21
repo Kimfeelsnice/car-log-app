@@ -82,11 +82,25 @@
         <label for="end_location">End Location</label>
         <input type="text" name="end_location" required>
 
+        <label for="starting_odometer">Starting Odometer</label>
+        <input type="number" name="starting_odometer" id="starting_odometer" step="0.1" required>
+
+        <label for="ending_odometer">Ending Odometer</label>
+        <input type="number" name="ending_odometer" id="ending_odometer" step="0.1" required>
+
+        <label for="distance">Distance (km)</label>
+        <input type="number" name="distance" id="distance" step="0.1" readonly required>
+
         <label for="purpose">Purpose</label>
         <textarea name="purpose" required></textarea>
 
-        <label for="distance">Distance (km)</label>
-        <input type="number" name="distance" step="0.1" required>
+        <label for="program_charged">Program Charged</label>
+        <select name="program_charged" required>
+            <option value="">-- Select Program --</option>
+            <option value="Overhead">Overhead</option>
+            <option value="KCERF">KCERF</option>
+            <option value="RPS">RPS</option>
+        </select>
 
         <label for="driver">Driver</label>
         <select name="driver" required>
@@ -98,4 +112,20 @@
 
     <a class="back-link" href="{{ url_for('dashboard') }}">← Back to dashboard</a>
 </div>
+
+<script>
+    const startInput = document.getElementById('starting_odometer');
+    const endInput = document.getElementById('ending_odometer');
+    const distanceInput = document.getElementById('distance');
+
+    function calculateDistance() {
+        const start = parseFloat(startInput.value) || 0;
+        const end = parseFloat(endInput.value) || 0;
+        const distance = end - start;
+        distanceInput.value = distance > 0 ? distance.toFixed(1) : 0;
+    }
+
+    startInput.addEventListener('input', calculateDistance);
+    endInput.addEventListener('input', calculateDistance);
+</script>
 {% endblock %}

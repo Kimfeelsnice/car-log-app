@@ -71,11 +71,9 @@
         <label for="vehicle">Vehicle</label>
         <select name="vehicle" required>
             <option value="">-- Select Vehicle --</option>
-            <option value="KBQ 318J">KBQ 318J</option>
-            <option value="KCK 624S">KCK 624S</option>
-            <option value="KDC 172G">KDC 172G</option>
-            <option value="KMDN 427L">KMDN 427L</option>
-            <option value="KMEE 967H">KMEE 967H</option>
+            {% for vehicle in vehicle_list %}
+                <option value="{{ vehicle }}">{{ vehicle }}</option>
+            {% endfor %}
         </select>
 
         <label for="liters">Litres</label>
@@ -94,7 +92,7 @@
         </select>
 
         <label for="driver">Driver</label>
-        <input type="text" name="driver" value="{{ session['username'] }}" readonly>
+        <input type="text" name="driver" value="{{ current_user.username }}" readonly>
 
         <label for="station">Station</label>
         <input type="text" name="station" required>

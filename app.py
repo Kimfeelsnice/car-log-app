@@ -22,6 +22,10 @@ VEHICLE_LIST = [
     "KBQ 318J", "KCK 624S", "KDC 172G", "KMDN 427L", "KMEE 967H"
 ]
 
+PROGRAM_LIST = [
+    "Overhead", "KCERF", "RPS"
+]
+
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), unique=True, nullable=False)
@@ -34,8 +38,11 @@ class TripLog(db.Model):
     vehicle = db.Column(db.String(100), nullable=False)
     start_location = db.Column(db.String(100), nullable=False)
     end_location = db.Column(db.String(100), nullable=False)
-    purpose = db.Column(db.Text, nullable=False)
+    starting_odometer = db.Column(db.Float, nullable=False)
+    ending_odometer = db.Column(db.Float, nullable=False)
     distance = db.Column(db.Float, nullable=False)
+    purpose = db.Column(db.Text, nullable=False)
+    program_charged = db.Column(db.String(150), nullable=False)
     driver = db.Column(db.String(100), nullable=False)
 
 class MaintenanceLog(db.Model):
@@ -154,7 +161,7 @@ def verify_code():
 def reset_password():
     email = request.args.get('email')
     if request.method == 'POST':
-        password = request.form['new_password']  # <-- fixed line here
+        password = request.form['new_password']
         user = User.query.filter_by(email=email).first()
         if user:
             user.password_hash = generate_password_hash(password)
@@ -186,20 +193,27 @@ def trip_logs():
 @login_required
 def add_trip_log():
     if request.method == 'POST':
+        starting_odometer = float(request.form['starting_odometer'])
+        ending_odometer = float(request.form['ending_odometer'])
+        distance = ending_odometer - starting_odometer
+
         new_trip = TripLog(
             date=request.form['date'],
             vehicle=request.form['vehicle'],
             start_location=request.form['start_location'],
             end_location=request.form['end_location'],
+            starting_odometer=starting_odometer,
+            ending_odometer=ending_odometer,
+            distance=distance,
             purpose=request.form['purpose'],
-            distance=float(request.form['distance']),
-            driver=request.form['driver']
+            program_charged=request.form['program_charged'],
+            driver=current_user.username
         )
         db.session.add(new_trip)
         db.session.commit()
         flash('Trip log added successfully.')
         return redirect(url_for('trip_logs'))
-    return render_template('add_trip_log.html', vehicle_list=VEHICLE_LIST)
+    return render_template('add_trip_log.html', vehicle_list=VEHICLE_LIST, program_list=PROGRAM_LIST)
 
 @app.route('/maintenance_logs')
 @login_required
@@ -216,7 +230,7 @@ def add_maintenance_log():
             vehicle=request.form['vehicle'],
             service_type=request.form['service_type'],
             cost=float(request.form['cost']),
-            driver=request.form['driver'],
+            driver=current_user.username,
             mechanic=request.form.get('mechanic'),
             description=request.form.get('description'),
             notes=request.form.get('notes')
@@ -243,7 +257,7 @@ def add_fuel_log():
             liters=float(request.form['liters']),
             cost=float(request.form['cost']),
             fuel_type=request.form['fuel_type'],
-            driver=request.form['driver'],
+            driver=current_user.username,
             station=request.form.get('station')
         )
         db.session.add(new_log)
