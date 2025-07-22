@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    h2 {
+        color: #d7262b;
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .report-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 30px 0;
+        box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+
+    .report-table th, .report-table td {
+        padding: 12px;
+        text-align: center;
+        border: 1px solid #ccc;
+    }
+
+    .report-table th {
+        background-color: #f8f8f8;
+        font-weight: bold;
+    }
+
+    .back-link {
+        display: block;
+        text-align: center;
+        margin-top: 30px;
+        text-decoration: none;
+        color: #d7262b;
+    }
+
+    .back-link:hover {
+        text-decoration: underline;
+    }
+</style>
+<form method="POST" action="{{ url_for('export_excel') }}">
+  <input type="hidden" name="vehicle" value="{{ request.form.vehicle }}">
+  <input type="hidden" name="driver" value="{{ request.form.driver }}">
+  <input type="hidden" name="program" value="{{ request.form.program }}">
+  <input type="hidden" name="log_type" value="{{ request.form.log_type }}">
+  <input type="hidden" name="start_date" value="{{ request.form.start_date }}">
+  <input type="hidden" name="end_date" value="{{ request.form.end_date }}">
+  <button type="submit">Export to Excel</button>
+</form>
+
+<h2>Filtered Report Results</h2>
+
+{% if trip_report %}
+<h3 style="color: #d7262b;">Trip Logs</h3>
+<table class="report-table">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Vehicle</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Start Odometer</th>
+            <th>End Odometer</th>
+            <th>Distance</th>
+            <th>Purpose</th>
+            <th>Program</th>
+            <th>Driver</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for log in trip_report %}
+        <tr>
+            <td>{{ log.date }}</td>
+            <td>{{ log.vehicle }}</td>
+            <td>{{ log.start_location }}</td>
+            <td>{{ log.end_location }}</td>
+            <td>{{ "%.1f"|format(log.starting_odometer) }}</td>
+            <td>{{ "%.1f"|format(log.ending_odometer) }}</td>
+            <td>{{ "%.1f"|format(log.distance) }}</td>
+            <td>{{ log.purpose }}</td>
+            <td>{{ log.program_charged }}</td>
+            <td>{{ log.driver }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+{% if fuel_report %}
+<h3 style="color: #d7262b;">Fuel Logs</h3>
+<table class="report-table">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Vehicle</th>
+            <th>Liters</th>
+            <th>Cost</th>
+            <th>Fuel Type</th>
+            <th>Driver</th>
+            <th>Station</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for log in fuel_report %}
+        <tr>
+            <td>{{ log.date }}</td>
+            <td>{{ log.vehicle }}</td>
+            <td>{{ "%.2f"|format(log.liters) }}</td>
+            <td>{{ "%.2f"|format(log.cost) }}</td>
+            <td>{{ log.fuel_type }}</td>
+            <td>{{ log.driver }}</td>
+            <td>{{ log.station }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+{% if maintenance_report %}
+<h3 style="color: #d7262b;">Maintenance Logs</h3>
+<table class="report-table">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Vehicle</th>
+            <th>Service Type</th>
+            <th>Cost</th>
+            <th>Driver</th>
+            <th>Mechanic</th>
+            <th>Description</th>
+            <th>Notes</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for log in maintenance_report %}
+        <tr>
+            <td>{{ log.date }}</td>
+            <td>{{ log.vehicle }}</td>
+            <td>{{ log.service_type }}</td>
+            <td>{{ "%.2f"|format(log.cost) }}</td>
+            <td>{{ log.driver }}</td>
+            <td>{{ log.mechanic }}</td>
+            <td>{{ log.description }}</td>
+            <td>{{ log.notes }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+<a class="back-link" href="{{ url_for('report_logs') }}">← Back to Search Logs</a>
+{% endblock %}

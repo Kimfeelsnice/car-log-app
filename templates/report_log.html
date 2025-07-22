@@ -8,6 +8,40 @@
         margin-bottom: 30px;
     }
 
+    form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        justify-content: center;
+        margin-bottom: 30px;
+    }
+
+    form div {
+        display: flex;
+        flex-direction: column;
+        min-width: 180px;
+    }
+
+    form label {
+        font-weight: bold;
+    }
+
+    form input, form select {
+        padding: 8px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+    }
+
+    form button {
+        margin-top: 25px;
+        padding: 10px 20px;
+        background-color: #d7262b;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
     .report-table {
         width: 100%;
         border-collapse: collapse;
@@ -39,6 +73,54 @@
     }
 </style>
 
+<h2>Search Logs</h2>
+<form method="POST" action="{{ url_for('report_results') }}">
+
+    <div>
+        <label for="start_date">Start Date:</label>
+        <input type="date" name="start_date" id="start_date" value="{{ request.args.get('start_date', '') }}">
+    </div>
+    <div>
+        <label for="end_date">End Date:</label>
+        <input type="date" name="end_date" id="end_date" value="{{ request.args.get('end_date', '') }}">
+    </div>
+    <div>
+        <label for="driver">Driver:</label>
+        <input type="text" name="driver" id="driver" value="{{ request.args.get('driver', '') }}">
+    </div>
+    <div>
+        <label for="vehicle">Vehicle:</label>
+        <select name="vehicle" id="vehicle">
+            <option value="">-- All --</option>
+            {% for v in vehicle_list %}
+            <option value="{{ v }}" {% if request.args.get('vehicle') == v %}selected{% endif %}>{{ v }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div>
+        <label for="program">Program Charged:</label>
+        <select name="program" id="program">
+            <option value="">-- All --</option>
+            {% for p in program_list %}
+            <option value="{{ p }}" {% if request.args.get('program') == p %}selected{% endif %}>{{ p }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div>
+        <label for="log_type">Log Type:</label>
+        <select name="log_type" id="log_type">
+            <option value="all" {% if request.args.get('log_type') == 'all' %}selected{% endif %}>All</option>
+            <option value="trip" {% if request.args.get('log_type') == 'trip' %}selected{% endif %}>Trip</option>
+            <option value="fuel" {% if request.args.get('log_type') == 'fuel' %}selected{% endif %}>Fuel</option>
+            <option value="maintenance" {% if request.args.get('log_type') == 'maintenance' %}selected{% endif %}>Maintenance</option>
+        </select>
+    </div>
+    <div>
+        <button type="submit">Search</button>
+    </div>
+</form>
+
+{% if fuel_report %}
 <h2>Fuel Logs</h2>
 <table class="report-table">
     <thead>
@@ -66,7 +148,9 @@
         {% endfor %}
     </tbody>
 </table>
+{% endif %}
 
+{% if trip_report %}
 <h2>Trip Logs</h2>
 <table class="report-table">
     <thead>
@@ -100,7 +184,9 @@
         {% endfor %}
     </tbody>
 </table>
+{% endif %}
 
+{% if maintenance_report %}
 <h2>Maintenance Logs</h2>
 <table class="report-table">
     <thead>
@@ -130,6 +216,7 @@
         {% endfor %}
     </tbody>
 </table>
+{% endif %}
 
 <a class="back-link" href="{{ url_for('dashboard') }}">← Back to Dashboard</a>
 {% endblock %}

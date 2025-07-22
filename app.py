@@ -18,13 +18,8 @@ login_manager = LoginManager()
 login_manager.login_view = 'login'
 login_manager.init_app(app)
 
-VEHICLE_LIST = [
-    "KBQ 318J", "KCK 624S", "KDC 172G", "KMDN 427L", "KMEE 967H"
-]
-
-PROGRAM_LIST = [
-    "Overhead", "KCERF", "RPS"
-]
+VEHICLE_LIST = ["KBQ 318J", "KCK 624S", "KDC 172G", "KMDN 427L", "KMEE 967H"]
+PROGRAM_LIST = ["Overhead", "KCERF", "RPS"]
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -275,7 +270,105 @@ def report_logs():
     return render_template('report_log.html',
                            fuel_report=fuel_report,
                            trip_report=trip_report,
+                           maintenance_report=maintenance_report,
+                           vehicle_list=VEHICLE_LIST,
+                           program_list=PROGRAM_LIST)
+
+@app.route('/report_results', methods=['POST'])
+@login_required
+def report_results():
+    vehicle = request.form.get('vehicle')
+    driver = request.form.get('driver')
+    program = request.form.get('program')
+    log_type = request.form.get('log_type')
+    start_date = request.form.get('start_date')
+    end_date = request.form.get('end_date')
+
+    trip_query = TripLog.query
+    fuel_query = FuelLog.query
+    maintenance_query = MaintenanceLog.query
+
+    if vehicle:
+        trip_query = trip_query.filter_by(vehicle=vehicle)
+        fuel_query = fuel_query.filter_by(vehicle=vehicle)
+        maintenance_query = maintenance_query.filter_by(vehicle=vehicle)
+    if driver:
+        trip_query = trip_query.filter_by(driver=driver)
+        fuel_query = fuel_query.filter_by(driver=driver)
+        maintenance_query = maintenance_query.filter_by(driver=driver)
+    if program:
+        trip_query = trip_query.filter_by(program_charged=program)
+
+    if start_date and end_date:
+        trip_query = trip_query.filter(TripLog.date.between(start_date, end_date))
+        fuel_query = fuel_query.filter(FuelLog.date.between(start_date, end_date))
+        maintenance_query = maintenance_query.filter(MaintenanceLog.date.between(start_date, end_date))
+
+    trip_report = trip_query.all() if log_type in ['trip', 'all'] else []
+    fuel_report = fuel_query.all() if log_type in ['fuel', 'all'] and not program else []
+    maintenance_report = maintenance_query.all() if log_type in ['maintenance', 'all'] and not program else []
+
+    return render_template('report_results.html',
+                           trip_report=trip_report,
+                           fuel_report=fuel_report,
                            maintenance_report=maintenance_report)
+from flask import send_file
+import io
+from openpyxl import Workbook
+
+@app.route('/export_excel', methods=['POST'])
+@login_required
+def export_excel():
+    vehicle = request.form.get('vehicle')
+    driver = request.form.get('driver')
+    program = request.form.get('program')
+    log_type = request.form.get('log_type')
+    start_date = request.form.get('start_date')
+    end_date = request.form.get('end_date')
+
+    trip_query = TripLog.query
+    fuel_query = FuelLog.query
+    maintenance_query = MaintenanceLog.query
+
+    if vehicle:
+        trip_query = trip_query.filter_by(vehicle=vehicle)
+        fuel_query = fuel_query.filter_by(vehicle=vehicle)
+        maintenance_query = maintenance_query.filter_by(vehicle=vehicle)
+    if driver:
+        trip_query = trip_query.filter_by(driver=driver)
+        fuel_query = fuel_query.filter_by(driver=driver)
+        maintenance_query = maintenance_query.filter_by(driver=driver)
+    if program:
+        trip_query = trip_query.filter_by(program_charged=program)
+    if start_date and end_date:
+        trip_query = trip_query.filter(TripLog.date.between(start_date, end_date))
+        fuel_query = fuel_query.filter(FuelLog.date.between(start_date, end_date))
+        maintenance_query = maintenance_query.filter(MaintenanceLog.date.between(start_date, end_date))
+
+    trip_report = trip_query.all() if log_type in ['trip', 'all'] else []
+    fuel_report = fuel_query.all() if log_type in ['fuel', 'all'] else []
+    maintenance_report = maintenance_query.all() if log_type in ['maintenance', 'all'] else []
+
+    output = io.BytesIO()
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Report Logs"
+
+    ws.append(["Log Type", "Date", "Vehicle", "Driver", "Details"])
+
+    for t in trip_report:
+        ws.append(["Trip", t.date, t.vehicle, t.driver, f"{t.start_location} to {t.end_location}, {t.distance} km, {t.program_charged}"])
+
+    for f in fuel_report:
+        ws.append(["Fuel", f.date, f.vehicle, f.driver, f"{f.liters} L, {f.fuel_type}, {f.cost} KES"])
+
+    for m in maintenance_report:
+        ws.append(["Maintenance", m.date, m.vehicle, m.driver, f"{m.service_type}, {m.cost} KES"])
+
+    wb.save(output)
+    output.seek(0)
+
+    return send_file(output, as_attachment=True, download_name="car_log_report.xlsx", mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 
 if __name__ == '__main__':
     with app.app_context():
